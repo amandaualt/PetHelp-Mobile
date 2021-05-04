@@ -1,0 +1,14 @@
+com/PetHelp/BuildConfig.java
+ com.PetHelp.BuildConfig
+com/testeteste/ReactNativeFlipper.java
+ com.PetHelp.ReactNativeFlipper
+ com.PetHelp.ReactNativeFlipper$1
+ com.PetHelp.ReactNativeFlipper$2
+ com.PetHelp.ReactNativeFlipper$2$1
+com/testeteste/MainActivity.java
+ com.PetHelp.MainActivity
+com/testeteste/MainApplication.java
+ com.PetHelp.MainApplication
+ com.PetHelp.MainApplication$1
+com/facebook/react/PackageList.java
+ com.facebook.react.PackageList
