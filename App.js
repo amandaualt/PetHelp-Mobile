@@ -9,36 +9,43 @@ import RecuperarSenha from './src/view/RecuperarSenha';
 
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
+import {Provider} from 'react-redux';
+import {createStore, applyMiddleware} from 'redux';
+import reduxThunk from 'redux-thunk';
+import rootReducer from './src/reducers';
 
 const Stack = createStackNavigator();
+const store = createStore(rootReducer, applyMiddleware(reduxThunk));
 
 const App: () => React$Node = () => {
   return (
     <>
-      <NavigationContainer>
-        <Stack.Navigator>
-          <Stack.Screen
-            name="Login"
-            component={Login}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="Menu"
-            component={Menu}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="CadastrarPessoas"
-            component={CadastrarPessoas}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name="RecuperarSenha"
-            component={RecuperarSenha}
-            options={{headerShown: false}}
-          />
-        </Stack.Navigator>
-      </NavigationContainer>
+      <Provider store={store}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="Menu"
+              component={Menu}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="CadastrarPessoas"
+              component={CadastrarPessoas}
+              options={{headerShown: false}}
+            />
+            <Stack.Screen
+              name="RecuperarSenha"
+              component={RecuperarSenha}
+              options={{headerShown: false}}
+            />
+          </Stack.Navigator>
+        </NavigationContainer>
+      </Provider>
     </>
   );
 };

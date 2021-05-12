@@ -9,6 +9,8 @@ import {
 import Home from '../view/Home';
 import AddPet from '../view/AddPet';
 import Icon from 'react-native-vector-icons/FontAwesome5';
+import firebase from '../config/firebaseConfig';
+import 'firebase/auth';
 
 const Drawer = createDrawerNavigator();
 
@@ -38,15 +40,27 @@ export default function Menu() {
 }
 
 function CustomDrawerContent(props) {
+  function sair() {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        props.navigation.navigate('Login');
+      })
+      .catch(error => {
+        console.log('deu ruim');
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        console.log(`errorMessage: ${errorMessage}`);
+      });
+  }
   return (
     <DrawerContentScrollView {...props}>
       <ProfileDrawer {...props} />
       <DrawerItemList {...props} />
       <DrawerItem
         label="Logout"
-        onPress={() => {
-          props.navigation.popToTop();
-        }}
+        onPress={() => sair()}
         labelStyle={{color: '#4A4444', fontSize: 18}}
         icon={() => <Icon name="sign-out-alt" size={30} color="#4A4444" />}
       />

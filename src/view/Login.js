@@ -1,42 +1,39 @@
-import React, {useState, useEffect} from 'react';
-import {View, Image, TextInput, StyleSheet, Text} from 'react-native';
+import React, {useState} from 'react';
+import {
+  View,
+  Image,
+  TextInput,
+  StyleSheet,
+  Text,
+  Alert,
+  ActivityIndicator,
+} from 'react-native';
 import FormRow from '../components/FormRow';
 import Btn from '../components/Btn';
 import Link from '../components/Link';
-import useDispatch from 'react-redux';
-import {firebase} from 'firebase';
+import 'firebase/auth';
+import {processLogin} from '../actions';
+import {connect} from 'react-redux';
 
-export default function Login(props) {
-  const [email, setEmail] = useState();
-  const [senha, setSenha] = useState();
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const firebaseConfig = {
-      apiKey: 'AIzaSyA6TSYfrgR76kO0MHzKiyMaai9JNnDEYsc',
-      authDomain: 'pethelp-cf322.firebaseapp.com',
-      databaseURL: 'https://pethelp-cf322.firebaseio.com',
-      projectId: 'pethelp-cf322',
-      storageBucket: 'pethelp-cf322.appspot.com',
-      messagingSenderId: '545358057241',
-      appId: '1:545358057241:web:ae39a79e642d55cc0cbf88',
-    };
-    firebase.initializeApp(firebaseConfig);
-  });
+function Login(props) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   function autenticar() {
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, senha)
-      .then(resultado => {
-        console.log('ok');
-        setTimeout(() => {
-          dispatch({type: 'LOGIN', usuarioEmail: email});
-        }, 2000);
+    props
+      .processLogin({email, password})
+      .then(user => {
+        if (user) {
+          props.navigation.replace('Menu');
+          console.log('deu certo');
+        } else {
+          // isLoading: false;
+          console.log('deu cero');
+        }
       })
-      .catch(erro => {
-        setMsgTipo('erro');
+      .catch(error => {
+        console.log(error);
+        console.log('deu ruim');
       });
   }
 
@@ -49,8 +46,8 @@ export default function Login(props) {
       <FormRow>
         <TextInput
           placeholder="E-mail: usuario@usuario.com"
-          onChange={e => setEmail(e.target.value)}
-          // value={setEmail}
+          onChangeText={email => setEmail(email)}
+          value={email}
           placeholderTextColor="#4A4444"
           color="#4A4444"
         />
@@ -62,10 +59,17 @@ export default function Login(props) {
           placeholder="Senha: 123456"
           secureTextEntry
           keyboardType="numeric"
-          // value={setSenha}
-          onChange={e => setSenha(e.target.value)}
+          onChangeText={password => setPassword(password)}
+          value={password}
         />
       </FormRow>
+      <Btn
+        title="Fazer Login"
+        onPress={() => autenticar()}
+        // onPress={() => {
+        //   props.navigation.navigate('Menu');
+        // }}
+      />
       <View style={styles.containerLink}>
         <Link
           title="Recuperar senha"
@@ -74,13 +78,6 @@ export default function Login(props) {
           }}
         />
       </View>
-      <Btn
-        title="Fazer Login"
-        // onPress={() => autenticar}
-        onPress={() => {
-          props.navigation.navigate('Menu');
-        }}
-      />
       <View style={styles.containerLink1}>
         <Link
           title="Cadastrar-se"
@@ -110,3 +107,5 @@ const styles = StyleSheet.create({
     marginLeft: 260,
   },
 });
+
+export default connect(null, {processLogin})(Login);

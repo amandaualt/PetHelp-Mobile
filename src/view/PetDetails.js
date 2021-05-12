@@ -6,8 +6,10 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import HeaderDrawNav from '../components/headerDrawNav';
 import Btn from '../components/Btn';
 import LinkV from '../components/Link';
+import {connect} from 'react-redux';
+import {deletePet} from '../actions';
 
-export default function PetDetails({navigation, route}) {
+function PetDetails({navigation, route, deletePet}) {
   const pet = route.params.pet;
   const alertExcluir = () =>
     Alert.alert('Excluir', 'Você deseja mesmo excluir esse Pet?', [
@@ -43,7 +45,8 @@ export default function PetDetails({navigation, route}) {
           <Image
             style={styles.petImage}
             source={{
-              uri: pet.imagem.pequena,
+              uri: pet.img,
+              // uri: `data:${image.mime};base64,${image.data}`,
             }}
           />
           <View style={styles.containerLabels}>
@@ -80,8 +83,23 @@ export default function PetDetails({navigation, route}) {
           </View>
 
           <View style={styles.containerButton}>
-            <Btn title="Excluir" onPress={alertExcluir} />
-            <Btn title="Editar" onPress={alertEditar} />
+            <Btn
+              title="Excluir"
+              onPress={async () => {
+                const hasDeleted = await deletePet(pet);
+                if (hasDeleted) {
+                  navigation.goBack();
+                }
+              }}
+            />
+            <Btn
+              title="Editar"
+              onPress={() => {
+                navigation.replace('AddPet', {
+                  petToEdit: pet,
+                });
+              }}
+            />
           </View>
         </View>
       </ScrollView>
@@ -124,3 +142,5 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
 });
+
+export default connect(null, {deletePet})(PetDetails);

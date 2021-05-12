@@ -10,7 +10,7 @@ const PetItems = props => {
       <Image
         style={styles.petImage}
         source={{
-          uri: pet.imagem.pequena,
+          uri: pet.img,
         }}
         // source={require(`./assets/${pet.imagem.grande}`)}
       />

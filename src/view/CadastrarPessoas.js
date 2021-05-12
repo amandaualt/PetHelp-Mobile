@@ -11,11 +11,56 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import FormRow from '../components/FormRow';
 import Btn from '../components/Btn';
 import Link from '../components/Link';
+import firebase from '../config/firebaseConfig';
+import 'firebase/auth';
 
 export default function CadastrarPessoas({navigation}) {
-  const [text, setText] = useState('');
-  const [date, setDatet] = useState('');
+  const [email, setEmail] = useState();
+  const [senha, setSenha] = useState();
+  const [nome, setNome] = useState();
 
+  const [msgTipo, setMsgTipo] = useState();
+  const [msg, setMsg] = useState();
+  const [carregando, setCarregando] = useState();
+
+  function cadastrar() {
+    setCarregando(1);
+    setMsgTipo(null);
+
+    if (!email || !senha || !nome) {
+      setMsgTipo('erro');
+      setMsg('Você não preencheu todos os campos!');
+    }
+
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, senha)
+      .then(resultado => {
+        setCarregando(0);
+        setMsgTipo('ok');
+      })
+      .catch(erro => {
+        setMsgTipo('erro');
+        setCarregando(0);
+        switch (erro.message) {
+          case 'Password should be at least 6 characteres.':
+            setMsg('A senha deve ter pelo menos 6 caracteres');
+            break;
+          case 'The email address is already in use by another account.':
+            setMsg('Esse e-mail ja está sendo utilizado');
+            break;
+          case 'The email address is badly formatted.':
+            setMsg('O formato de e-mail é invalido');
+            break;
+          case setNome == null:
+            setMsg('Campo nome vazio');
+            break;
+          default:
+            setMsg('Não foi possivel cadastrar, Por favor tente mais tarde.');
+            break;
+        }
+      });
+  }
   const buttonAdd = () =>
     Alert.alert('Adicionar', 'Pet adicionado com sucesso', [
       {
@@ -24,14 +69,7 @@ export default function CadastrarPessoas({navigation}) {
         style: 'cancel',
       },
     ]);
-  const AddFoto = () =>
-    Alert.alert('AdicionarFoto', 'Pet adicionado com sucesso', [
-      {
-        text: 'ok',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      },
-    ]);
+
   return (
     <View style={styles.abc}>
       <ScrollView>
@@ -52,11 +90,9 @@ export default function CadastrarPessoas({navigation}) {
             </Text>
           </View>
           <Icon name="user" size={150} color="#000" />
-          <View>
-            <Link title="Adicionar Foto" onPress={AddFoto} />
-          </View>
+          <View>{/* <Link title="Adicionar Foto" onPress={AddFoto} /> */}</View>
           <View style={styles.containerLabels}>
-            <FormRow>
+            {/* <FormRow>
               <View style={styles.alingInput}>
                 <Icon
                   style={styles.icons}
@@ -67,63 +103,11 @@ export default function CadastrarPessoas({navigation}) {
                 <TextInput
                   placeholderTextColor="#4A4444"
                   placeholder="Digite seu nome*"
-                  onChangeText={valor => {
-                    setText('email', valor);
-                  }}
-                />
-              </View>
-            </FormRow>
-            <FormRow>
-              <View style={styles.alingInput}>
-                <Icon
-                  style={styles.icons}
-                  name="mobile-alt"
-                  size={28}
+                  onChange={e => setNome(e.target.value)}
                   color="#2F2F2E"
                 />
-                <TextInput
-                  placeholderTextColor="#4A4444"
-                  placeholder="Telefone"
-                  onChangeText={valor => {
-                    setText('email', valor);
-                  }}
-                />
               </View>
-            </FormRow>
-            <FormRow>
-              <View style={styles.alingInput}>
-                <Icon
-                  style={styles.icons}
-                  name="birthday-cake"
-                  size={28}
-                  color="#2F2F2E"
-                />
-                <TextInput
-                  placeholderTextColor="#4A4444"
-                  placeholder="Data de nascimento*"
-                  onChangeText={valor => {
-                    setText('email', valor);
-                  }}
-                />
-              </View>
-            </FormRow>
-            <FormRow>
-              <View style={styles.alingInput}>
-                <Icon
-                  style={styles.icons}
-                  name="venus-mars"
-                  size={28}
-                  color="#2F2F2E"
-                />
-                <TextInput
-                  placeholderTextColor="#4A4444"
-                  placeholder="Genêro*"
-                  onChangeText={valor => {
-                    setText('email', valor);
-                  }}
-                />
-              </View>
-            </FormRow>
+            </FormRow> */}
             <FormRow>
               <View style={styles.alingInput}>
                 <Icon
@@ -135,9 +119,8 @@ export default function CadastrarPessoas({navigation}) {
                 <TextInput
                   placeholderTextColor="#4A4444"
                   placeholder="email*"
-                  onChangeText={valor => {
-                    setText('email', valor);
-                  }}
+                  onChange={e => setEmail(e)}
+                  color="#2F2F2E"
                 />
               </View>
             </FormRow>
@@ -150,11 +133,12 @@ export default function CadastrarPessoas({navigation}) {
                   color="#2F2F2E"
                 />
                 <TextInput
+                  color="#2F2F2E"
                   placeholderTextColor="#4A4444"
                   placeholder="Senha*"
-                  onChangeText={valor => {
-                    setText('email', valor);
-                  }}
+                  secureTextEntry
+                  keyboardType="numeric"
+                  onChange={e => setSenha(e.target.value)}
                 />
               </View>
             </FormRow>
@@ -168,17 +152,17 @@ export default function CadastrarPessoas({navigation}) {
                 />
                 <TextInput
                   placeholderTextColor="#4A4444"
-                  value={date}
+                  // value={date}
+                  secureTextEntry
                   placeholder="Confirmação de Senha"
                   keyboardType="numeric"
-                  onChangeText={valor => {
-                    this.onChangeHandler('data', valor);
-                  }}
+                  onChange={e => setSenha(e.target.value)}
+                  color="#2F2F2E"
                 />
               </View>
             </FormRow>
           </View>
-          <Btn title="Criar Cadastro" onPress={buttonAdd} />
+          <Btn title="Criar Cadastro" onPress={cadastrar} />
         </View>
       </ScrollView>
     </View>

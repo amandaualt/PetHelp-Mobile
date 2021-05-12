@@ -12,7 +12,8 @@ const CardPet = props => {
       data={pet}
       renderItem={({item}) => <PetItems pet={item} onPressItem={onPressItem} />}
       // button
-      keyExtractor={(item, index) => item + index}
+      // keyExtractor={(item, index) => item + index}
+      keyExtractor={item => item.id}
     />
   );
 };

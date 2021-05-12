@@ -6,6 +6,18 @@ import FormRow from '../components/FormRow';
 import Link from '../components/Link';
 
 export default function RecuperarSenha({navigation}) {
+  var auth = firebase.auth();
+  var emailAddress = 'user@example.com';
+
+  auth
+    .sendPasswordResetEmail(emailAddress)
+    .then(function () {
+      // Email sent.
+    })
+    .catch(function (error) {
+      // An error happened.
+    });
+
   const [data, setData] = useState({
     email: '',
   });
